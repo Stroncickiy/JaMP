@@ -14,7 +14,9 @@ public class SingleThreadFileSystemScanner extends FileSystemScanner {
 
     protected void walk(File root) {
         File[] list = root.listFiles();
-        if (list == null) return;
+        if (list == null) {
+            return;
+        }
         for (File currentFileOrFolder : list) {
             if (currentFileOrFolder.isDirectory()) {
                 walk(currentFileOrFolder);

@@ -7,9 +7,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.Phaser;
 import java.util.concurrent.RecursiveAction;
 
 public class ForkJoinFileSystemScanner extends FileSystemScanner {
+    private Phaser phaser = new Phaser();
 
     public ForkJoinFileSystemScanner(String name) {
         super(name);
@@ -17,8 +20,12 @@ public class ForkJoinFileSystemScanner extends FileSystemScanner {
 
     @Override
     protected void walk(File root) {
-        ForkJoinPool pool = new ForkJoinPool(30);
-        pool.submit(new ScanFolderAction(root));
+        ForkJoinPool pool = new ForkJoinPool(20);
+        phaser.register();
+        phaser.register();
+        pool.invoke(new ScanFolderAction(root));
+        phaser.arriveAndAwaitAdvance();
+        pool.shutdown();
     }
 
 
@@ -32,17 +39,22 @@ public class ForkJoinFileSystemScanner extends FileSystemScanner {
 
         @Override
         protected void compute() {
-
-            if (workingFolderFiles == null) return;
+            if (workingFolderFiles == null) {
+                phaser.arriveAndDeregister();
+                return;
+            }
             if (this.workingFolderFiles.length > 0) {
-                List<ScanFolderAction> subTasks =
-                        new ArrayList<>();
-                subTasks.addAll(createSubtasks(workingFolderFiles));
+                List<ScanFolderAction> subTasks = createSubtasks(workingFolderFiles);
                 for (File file : workingFolderFiles) {
                     fileSystemScaningResult.registerFile(file);
                 }
-                subTasks.forEach(RecursiveAction::fork);
+                for (RecursiveAction action : subTasks) {
+                    phaser.register();
+                    action.fork();
+                }
             }
+            phaser.arriveAndDeregister();
+
         }
 
         private List<ScanFolderAction> createSubtasks(File[] workingFolderFiles) {

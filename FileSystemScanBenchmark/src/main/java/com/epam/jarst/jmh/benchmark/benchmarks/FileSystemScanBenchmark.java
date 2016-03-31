@@ -43,22 +43,17 @@ public class FileSystemScanBenchmark implements BenchmarkTask {
     @Benchmark
     public void scanFileSystemInOneThread() {
         singleThreadScanner.scanFileSystem(new File("D:\\"));
-        singleThreadScanner.printResult();
-
-
     }
 
 
     @Benchmark
     public void scanFileSystemInMultipleThreads() {
         multyThreadScanner.scanFileSystem(new File("D:\\"));
-        multyThreadScanner.printResult();
     }
 
     @Benchmark
     public void scanFileSystemForkJoin() {
         forkJoinScanner.scanFileSystem(new File("D:\\"));
-        forkJoinScanner.printResult();
     }
 
 
@@ -68,7 +63,6 @@ public class FileSystemScanBenchmark implements BenchmarkTask {
                 .include(".*" + FileSystemScanBenchmark.class.getSimpleName() + ".*")
                 .jvmArgs("-Xms3G", "-Xmx3G", "-XX:MaxDirectMemorySize=1G", "-XX:+PrintGCDetails", "-XX:+PrintGCTimeStamps", "-Xloggc:D:\\gc.log")
                 .timeUnit(TimeUnit.SECONDS)
-                .warmupIterations(5)
                 .measurementIterations(1)
                 .forks(1)
                 .mode(Mode.SingleShotTime)

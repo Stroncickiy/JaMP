@@ -2,65 +2,72 @@ package com.epam.jarst.jmh.benchmark.results;
 
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class FileSystemScaningResult {
-    private int countAllFilesAndFolders;
-    private int countFiles;
-    private int countFolders;
-    private int countDistinctFiles;
-    private Map<String, Integer> fileOccurrences;
+    private AtomicInteger countAllFilesAndFolders;
+    private AtomicInteger countFiles;
+    private AtomicInteger countFolders;
+    private AtomicInteger countDistinctFiles;
+    private Map<String, AtomicInteger> fileOccurrences;
 
     public FileSystemScaningResult() {
-        fileOccurrences = new HashMap<>();
+        countDistinctFiles = new AtomicInteger();
+        countAllFilesAndFolders = new AtomicInteger();
+        countFiles = new AtomicInteger();
+        countFolders = new AtomicInteger();
+        countDistinctFiles = new AtomicInteger();
+        fileOccurrences = Collections.synchronizedMap(new HashMap<>());
     }
 
-    public int getCountAllFilesAndFolders() {
+    public AtomicInteger getCountAllFilesAndFolders() {
         return countAllFilesAndFolders;
     }
 
     public void registerFile(File file) {
         if (file.isFile()) {
-            countFiles++;
+            countFiles.incrementAndGet();
         } else {
-            countFolders++;
+            countFolders.incrementAndGet();
         }
-        countAllFilesAndFolders++;
+        countAllFilesAndFolders.incrementAndGet();
         registerOccurence(file);
     }
 
 
     private void registerOccurence(File file) {
         if (file.getName() != null) {
-            if (fileOccurrences.containsKey(file)) {
-                fileOccurrences.computeIfPresent(file.getName(), (file1, integer) -> integer++);
+            if (fileOccurrences.containsKey(file.getName())) {
+                fileOccurrences.get(file.getName()).incrementAndGet();
             } else {
-                countDistinctFiles++;
-                fileOccurrences.put(file.getName(), 1);
+                countDistinctFiles.incrementAndGet();
+                fileOccurrences.put(file.getName(), new AtomicInteger(1));
             }
         }
 
     }
 
 
-    public int getCountFiles() {
+    public AtomicInteger getCountFiles() {
         return countFiles;
     }
 
 
-    public int getCountFolders() {
+    public AtomicInteger getCountFolders() {
         return countFolders;
     }
 
 
-    public int getCountDistinctFiles() {
+    public AtomicInteger getCountDistinctFiles() {
         return countDistinctFiles;
     }
 
 
-    public Map<String, Integer> getFileOccurrences() {
+    public Map<String, AtomicInteger> getFileOccurrences() {
         return fileOccurrences;
     }
 
