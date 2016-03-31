@@ -4,10 +4,7 @@ package com.epam.jarst.jmh.benchmark.scanners;
 import com.epam.jarst.jmh.benchmark.results.FileSystemScaningResult;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class FileSystemScanner {
@@ -41,14 +38,15 @@ public abstract class FileSystemScanner {
         Map<String, AtomicInteger> fileOccurences = fileSystemScaningResult.getFileOccurrences();
 
         System.out.println("Most Popular File And Folder Names");
-        Set<Map.Entry<String, AtomicInteger>> entries = fileOccurences.entrySet();
-        ArrayList<Map.Entry<String, AtomicInteger>> listEntries = new ArrayList<>(entries);
+
+        List<Map.Entry<String, AtomicInteger>> listEntries = new ArrayList<>(fileOccurences.entrySet());
+        listEntries.sort((o1, o2) -> o2.getValue().get() - o1.getValue().get());
 
         List<Map.Entry<String, AtomicInteger>> top10Entries;
         if (listEntries.size() > 10) {
             top10Entries = listEntries.subList(0, 10);
         } else {
-            top10Entries = (List<Map.Entry<String, AtomicInteger>>) listEntries.clone();
+            top10Entries = listEntries;
         }
         for (Map.Entry<String, AtomicInteger> entry : top10Entries) {
             System.out.println(entry.getKey() + " " + entry.getValue());
