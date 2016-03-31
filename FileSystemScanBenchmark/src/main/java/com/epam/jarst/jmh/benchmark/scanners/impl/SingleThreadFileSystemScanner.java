@@ -8,6 +8,10 @@ import java.io.File;
 public class SingleThreadFileSystemScanner extends FileSystemScanner {
 
 
+    public SingleThreadFileSystemScanner(String name) {
+        super(name);
+    }
+
     protected void walk(File root) {
         File[] list = root.listFiles();
         if (list == null) return;

@@ -11,6 +11,10 @@ import java.util.concurrent.RecursiveAction;
 
 public class ForkJoinFileSystemScanner extends FileSystemScanner {
 
+    public ForkJoinFileSystemScanner(String name) {
+        super(name);
+    }
+
     @Override
     protected void walk(File root) {
         ForkJoinPool pool = new ForkJoinPool(30);

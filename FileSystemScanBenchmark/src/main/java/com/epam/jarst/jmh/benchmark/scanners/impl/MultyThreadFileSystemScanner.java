@@ -12,12 +12,14 @@ public class MultyThreadFileSystemScanner extends FileSystemScanner {
 
     private ExecutorService executorService;
 
-    public MultyThreadFileSystemScanner() {
+    public MultyThreadFileSystemScanner(String name) {
+        super(name);
         executorService = Executors.newFixedThreadPool(20);
     }
 
     protected void walk(File root) {
         File[] list = root.listFiles();
+
         if (list == null) return;
         for (File currentFileOrFolder : list) {
             if (currentFileOrFolder.isDirectory()) {

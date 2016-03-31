@@ -11,6 +11,12 @@ import java.util.Set;
 
 public abstract class FileSystemScanner {
 
+    protected String name;
+
+    protected FileSystemScanner(String name) {
+        this.name = name;
+    }
+
     protected FileSystemScaningResult fileSystemScaningResult;
 
     public void scanFileSystem(File root) {
@@ -18,9 +24,9 @@ public abstract class FileSystemScanner {
         walk(root);
     }
 
-    public void printResult() {
+    synchronized public void printResult() {
         System.out.println("---------------------------------------");
-        System.out.println("File Scanning result of Single Thread Scanner");
+        System.out.println("File Scanning result of " + name + " Thread Scanner");
         System.out.println("count of all " +
                 fileSystemScaningResult.getCountAllFilesAndFolders());
         System.out.println("count of files " +

@@ -24,9 +24,9 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Benchmark)
 public class FileSystemScanBenchmark implements BenchmarkTask {
 
-    private FileSystemScanner forkJoinScanner = new ForkJoinFileSystemScanner();
-    private FileSystemScanner singleThreadScanner = new SingleThreadFileSystemScanner();
-    private FileSystemScanner multyThreadScanner = new MultyThreadFileSystemScanner();
+    private FileSystemScanner forkJoinScanner = new ForkJoinFileSystemScanner("Fork Join");
+    private FileSystemScanner singleThreadScanner = new SingleThreadFileSystemScanner("Single ");
+    private FileSystemScanner multyThreadScanner = new MultyThreadFileSystemScanner("Multy threaded");
 
 
     @Setup(Level.Trial)
@@ -68,6 +68,8 @@ public class FileSystemScanBenchmark implements BenchmarkTask {
                 .include(".*" + FileSystemScanBenchmark.class.getSimpleName() + ".*")
                 .jvmArgs("-Xms3G", "-Xmx3G", "-XX:MaxDirectMemorySize=1G", "-XX:+PrintGCDetails", "-XX:+PrintGCTimeStamps", "-Xloggc:D:\\gc.log")
                 .timeUnit(TimeUnit.SECONDS)
+                .warmupIterations(5)
+                .measurementIterations(1)
                 .forks(1)
                 .mode(Mode.SingleShotTime)
                 .build();
