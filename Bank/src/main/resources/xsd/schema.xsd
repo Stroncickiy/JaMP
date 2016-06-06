@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://bank.epam.com" version="1.0" targetNamespace="http://bank.epam.com">
+	<xs:element name="criteria" type="tns:searchCriteria" />
+	<xs:element name="currencies" type="tns:currencyRatesList" />
+	<xs:element name="currency" type="tns:currencyRate" />
+	<xs:element name="searchPeriod" type="tns:searchPeriod" />
+	<xs:element name="retrieveCurrencyRatesRequest" type="tns:retrieveCurrencyRatesRequest" />
+	<xs:element name="retrieveCurrencyRatesResponse" type="tns:retrieveCurrencyRatesResponse" />
+
+	<xs:complexType name="currencyRate">
+		<xs:sequence>
+			<xs:element name="date" type="xs:string" minOccurs="0" />
+			<xs:element name="digital_code" type="xs:int" />
+			<xs:element name="letter_code" type="xs:string" minOccurs="0" />
+			<xs:element name="number_of_units" type="xs:int" />
+			<xs:element name="currency_name" type="xs:string"
+				minOccurs="0" />
+			<xs:element name="exchange_rate" type="xs:float" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="currencyRatesList">
+		<xs:sequence>
+			<xs:element ref="tns:currency" minOccurs="1" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="retrieveCurrencyRatesResponse">
+		<xs:sequence>
+			<xs:element name="rates" type="tns:currencyRatesList"
+				minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="searchCriteria">
+		<xs:sequence>
+			<xs:element name="formType" type="tns:formType" minOccurs="1" />
+			<xs:element name="timeStep" type="tns:timeStep" minOccurs="1" />
+			<xs:element name="period" type="tns:searchPeriod"
+				minOccurs="1" />
+			<xs:element name="currencies" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="currency" type="xs:string" minOccurs="0"
+							maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="base" type="xs:string" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="searchPeriod">
+		<xs:sequence>
+			<xs:element name="start" type="xs:string" minOccurs="1" />
+			<xs:element name="end" type="xs:string" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="retrieveCurrencyRatesRequest">
+		<xs:sequence>
+			<xs:element ref="tns:criteria" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="timeStep">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="MONTHLY" />
+			<xs:enumeration value="DAILY" />
+			<xs:enumeration value="WEEK_FIRST_DAY" />
+			<xs:enumeration value="WEEK_AVERAGE" />
+			<xs:enumeration value="MONTH_FIRST_DAY" />
+			<xs:enumeration value="MONTH_AVERAGE" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="formType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SEARCH_FORM_PERIOD" />
+			<xs:enumeration value="SEARCH_FORM_DATE" />
+			<xs:enumeration value="SEARCH_FORM_CUSTOM" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="outerFormat">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="XML" />
+			<xs:enumeration value="XSL" />
+			<xs:enumeration value="TABLE" />
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
